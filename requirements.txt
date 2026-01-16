@@ -1,0 +1,6 @@
+# Cybersecurity Toolkit - Requirements
+# No external dependencies required - uses Python standard library only
+
+# Optional: For enhanced functionality, you can add:
+# cryptography>=41.0.0  # For advanced encryption features
+# requests>=2.31.0      # For network security testing
