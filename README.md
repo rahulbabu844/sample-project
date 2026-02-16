@@ -41,12 +41,16 @@ cd sample-project
 
 **Note**: This is the VAPT Project repository.
 
-2. No external dependencies required! This project uses only Python standard library.
+2. **Prerequisites**: Java 11 or higher, Maven 3.6+
 
-3. (Optional) Create a virtual environment:
+3. Build the project:
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+mvn clean compile
+```
+
+4. (Optional) Create an executable JAR:
+```bash
+mvn clean package
 ```
 
 ## Usage
@@ -55,60 +59,46 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 Run the main VAPT interface:
 ```bash
-python vapt_main.py
+mvn exec:java -Dexec.mainClass="com.vapt.VAPTMain"
+```
+
+Or if you've built the JAR:
+```bash
+java -jar target/vapt-project-1.0.0.jar
 ```
 
 This provides an interactive menu for Web, API, and Mobile VAPT scanning.
 
-### Running Individual VAPT Scanners
-
-You can also run each VAPT scanner independently:
-
-**Web Scanner:**
-```bash
-python vapt/web_scanner.py
-```
-
-**API Scanner:**
-```bash
-python vapt/api_scanner.py
-```
-
-**Mobile Scanner:**
-```bash
-python vapt/mobile_scanner.py
-```
-
 ## Tool Examples
 
 ### VAPT Toolkit
-```python
-from vapt.web_scanner import WebVAPTScanner
-from vapt.api_scanner import APIVAPTScanner
-from vapt.mobile_scanner import MobileVAPTScanner
-from vapt.report_generator import VAPTReportGenerator
+```java
+import com.vapt.scanner.WebVAPTScanner;
+import com.vapt.scanner.APIVAPTScanner;
+import com.vapt.scanner.MobileVAPTScanner;
+import com.vapt.report.VAPTReportGenerator;
+import java.util.*;
 
-# Web VAPT
-web_scanner = WebVAPTScanner("https://example.com")
-web_vulns = web_scanner.scan()
+// Web VAPT
+WebVAPTScanner webScanner = new WebVAPTScanner("https://example.com");
+List<Map<String, Object>> webVulns = webScanner.scan();
 
-# API VAPT
-api_scanner = APIVAPTScanner("https://api.example.com")
-api_vulns = api_scanner.scan(['/api/users', '/api/data'])
+// API VAPT
+APIVAPTScanner apiScanner = new APIVAPTScanner("https://api.example.com");
+List<String> endpoints = Arrays.asList("/api/users", "/api/data");
+List<Map<String, Object>> apiVulns = apiScanner.scan(endpoints);
 
-# Mobile VAPT
-mobile_scanner = MobileVAPTScanner()
-mobile_vulns = mobile_scanner.scan_apk("app.apk")
+// Mobile VAPT
+MobileVAPTScanner mobileScanner = new MobileVAPTScanner();
+List<Map<String, Object>> mobileVulns = mobileScanner.scanApk("app.apk");
 
-# Generate Report
-report_gen = VAPTReportGenerator()
-report_gen.add_web_vulnerabilities(web_vulns)
-report_gen.add_api_vulnerabilities(api_vulns)
-report_gen.add_mobile_vulnerabilities(mobile_vulns)
-report_gen.generate_html_report("vapt_report.html")
+// Generate Report
+VAPTReportGenerator reportGen = new VAPTReportGenerator();
+reportGen.addWebVulnerabilities(webVulns);
+reportGen.addApiVulnerabilities(apiVulns);
+reportGen.addMobileVulnerabilities(mobileVulns);
+reportGen.generateHtmlReport("vapt_report.html");
 ```
-
-**See [vapt/README.md](vapt/README.md) for detailed VAPT documentation.**
 
 ## Security Notes
 
@@ -126,16 +116,16 @@ report_gen.generate_html_report("vapt_report.html")
 
 ```
 VAPT-Project/
-├── vapt_main.py           # VAPT Toolkit main interface
-├── vapt/                  # VAPT Toolkit module
-│   ├── __init__.py
-│   ├── web_scanner.py     # Web application VAPT scanner
-│   ├── api_scanner.py     # API VAPT scanner
-│   ├── mobile_scanner.py  # Mobile application VAPT scanner
-│   ├── report_generator.py # VAPT report generator
-│   └── README.md          # Detailed VAPT documentation
-├── requirements.txt       # Project dependencies
-└── README.md             # This file
+├── pom.xml                                    # Maven build configuration
+├── src/main/java/com/vapt/
+│   ├── VAPTMain.java                          # Main entry point
+│   ├── scanner/
+│   │   ├── WebVAPTScanner.java               # Web application VAPT scanner
+│   │   ├── APIVAPTScanner.java                # API VAPT scanner
+│   │   └── MobileVAPTScanner.java            # Mobile application VAPT scanner
+│   └── report/
+│       └── VAPTReportGenerator.java           # VAPT report generator
+└── README.md                                  # This file
 ```
 
 ## Contributing
