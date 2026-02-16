@@ -1,4 +1,5 @@
-# Cybersecurity Toolkit - Requirements
+# VAPT Project - Requirements
+# Vulnerability Assessment and Penetration Testing Toolkit
 # No external dependencies required - uses Python standard library only
 
 # Optional: For enhanced functionality, you can add:

@@ -1,6 +1,6 @@
 """
-Cybersecurity Toolkit - Main Interface
-A collection of security tools for analysis and protection
+VAPT Project - Cybersecurity Tools Interface
+Additional security tools for analysis and protection
 """
 
 import sys
@@ -14,7 +14,7 @@ def print_banner():
     """Print the application banner."""
     banner = """
     ╔══════════════════════════════════════════════════════════╗
-    ║         CYBERSECURITY TOOLKIT - Security Tools           ║
+    ║         VAPT PROJECT - Cybersecurity Tools                ║
     ╚══════════════════════════════════════════════════════════╝
     """
     print(banner)
@@ -150,7 +150,7 @@ def main():
         elif choice == '4':
             file_integrity_menu()
         elif choice == '5':
-            print("\nThank you for using Cybersecurity Toolkit!")
+            print("\nThank you for using VAPT Project!")
             print("Stay secure! 🔒\n")
             sys.exit(0)
         else:

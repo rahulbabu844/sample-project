@@ -1,8 +1,37 @@
-# Cybersecurity Toolkit 🔒
+# VAPT Project 🔒
 
-A comprehensive collection of cybersecurity tools written in Python for security analysis, password checking, file integrity monitoring, and network scanning.
+A comprehensive Vulnerability Assessment and Penetration Testing (VAPT) toolkit for Web Applications, Mobile Applications, and APIs. Includes additional cybersecurity tools for password checking, file integrity monitoring, and network scanning.
 
-## Features
+## Primary Features - VAPT Toolkit
+
+### 🎯 Web Application VAPT Scanner
+- **SQL Injection Detection**: Tests for SQL injection vulnerabilities in URL parameters
+- **Cross-Site Scripting (XSS)**: Detects reflected XSS vulnerabilities
+- **Directory Traversal**: Checks for path traversal vulnerabilities
+- **Sensitive Files**: Scans for exposed configuration and sensitive files
+- **Security Headers**: Checks for missing security headers (X-Frame-Options, CSP, etc.)
+- **HTTP Methods**: Identifies dangerous HTTP methods (PUT, DELETE, TRACE)
+
+### 🎯 API VAPT Scanner
+- **Authentication Bypass**: Tests endpoints without authentication
+- **Rate Limiting**: Checks for missing or weak rate limiting
+- **Input Validation**: Tests for SQL injection, XSS, command injection
+- **CORS Misconfiguration**: Detects insecure CORS settings
+- **Sensitive Data Exposure**: Identifies exposed secrets in API responses
+
+### 🎯 Mobile Application VAPT Scanner
+- **APK Analysis**: Analyzes Android APK files for security vulnerabilities
+- **Permission Checking**: Reviews dangerous permissions in AndroidManifest.xml
+- **Hardcoded Secrets**: Scans for passwords, API keys, tokens in source files
+- **SSL Pinning**: Verifies SSL certificate pinning implementation
+- **Insecure Storage**: Detects unencrypted data storage usage
+
+### 📊 Report Generator
+- Generate comprehensive security reports in JSON, Text, and HTML formats
+- Vulnerability categorization by severity (Critical, High, Medium, Low)
+- Evidence collection for each vulnerability
+
+## Additional Cybersecurity Tools
 
 ### 1. Password Strength Checker
 - Analyzes password strength based on multiple criteria
@@ -29,6 +58,7 @@ A comprehensive collection of cybersecurity tools written in Python for security
 - Batch checking of all monitored files
 - Detect file modifications, deletions, and tampering
 
+
 ## Installation
 
 1. Clone the repository:
@@ -36,6 +66,8 @@ A comprehensive collection of cybersecurity tools written in Python for security
 git clone https://github.com/rahulbabu844/sample-project.git
 cd sample-project
 ```
+
+**Note**: This is the VAPT Project repository.
 
 2. No external dependencies required! This project uses only Python standard library.
 
@@ -47,14 +79,23 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 ## Usage
 
-### Running the Main Interface
+### Running the VAPT Toolkit (Primary)
 
-Run the main menu interface:
+Run the main VAPT interface:
+```bash
+python vapt_main.py
+```
+
+This provides an interactive menu for Web, API, and Mobile VAPT scanning.
+
+### Running Additional Cybersecurity Tools
+
+Run the cybersecurity tools interface:
 ```bash
 python main.py
 ```
 
-This will present you with a menu to access all tools.
+This will present you with a menu to access password checker, hash tool, port scanner, and file integrity checker.
 
 ### Running Individual Tools
 
@@ -78,6 +119,18 @@ python port_scanner.py
 **File Integrity Checker:**
 ```bash
 python file_integrity.py
+```
+
+**VAPT Toolkit:**
+```bash
+python vapt_main.py
+```
+
+You can also run individual VAPT scanners:
+```bash
+python vapt/web_scanner.py
+python vapt/api_scanner.py
+python vapt/mobile_scanner.py
 ```
 
 ## Tool Examples
@@ -130,6 +183,35 @@ print(result['message'])
 checker.check_all()
 ```
 
+### VAPT Toolkit (Primary Focus)
+```python
+from vapt.web_scanner import WebVAPTScanner
+from vapt.api_scanner import APIVAPTScanner
+from vapt.mobile_scanner import MobileVAPTScanner
+from vapt.report_generator import VAPTReportGenerator
+
+# Web VAPT
+web_scanner = WebVAPTScanner("https://example.com")
+web_vulns = web_scanner.scan()
+
+# API VAPT
+api_scanner = APIVAPTScanner("https://api.example.com")
+api_vulns = api_scanner.scan(['/api/users', '/api/data'])
+
+# Mobile VAPT
+mobile_scanner = MobileVAPTScanner()
+mobile_vulns = mobile_scanner.scan_apk("app.apk")
+
+# Generate Report
+report_gen = VAPTReportGenerator()
+report_gen.add_web_vulnerabilities(web_vulns)
+report_gen.add_api_vulnerabilities(api_vulns)
+report_gen.add_mobile_vulnerabilities(mobile_vulns)
+report_gen.generate_html_report("vapt_report.html")
+```
+
+**See [vapt/README.md](vapt/README.md) for detailed VAPT documentation.**
+
 ## Security Notes
 
 ⚠️ **Important Security Considerations:**
@@ -144,15 +226,28 @@ checker.check_all()
    - MD5 and SHA1 are considered weak and should not be used for security-critical applications
    - SHA256 and SHA512 are recommended for security purposes
 
+5. **VAPT Testing**: 
+   - **ONLY test applications and systems you own or have explicit written permission to test**
+   - Unauthorized security testing is illegal and unethical
+   - Always obtain proper authorization before conducting VAPT assessments
+   - Follow responsible disclosure practices for any vulnerabilities found
+
 ## Project Structure
 
 ```
-sample-project/
-├── main.py                 # Main CLI interface
+VAPT-Project/
+├── main.py                 # Cybersecurity tools CLI interface
+├── vapt_main.py           # VAPT Toolkit main interface (Primary)
 ├── password_checker.py     # Password strength analysis
 ├── hash_tool.py           # Hash generation and verification
 ├── port_scanner.py        # Network port scanning
 ├── file_integrity.py      # File integrity monitoring
+├── vapt/                  # VAPT Toolkit module
+│   ├── __init__.py
+│   ├── web_scanner.py     # Web application VAPT scanner
+│   ├── api_scanner.py     # API VAPT scanner
+│   ├── mobile_scanner.py  # Mobile application VAPT scanner
+│   └── report_generator.py # VAPT report generator
 ├── requirements.txt       # Project dependencies
 └── README.md             # This file
 ```
