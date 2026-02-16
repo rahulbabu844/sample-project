@@ -36,6 +36,7 @@ public class VAPTReportGenerator {
         vulnerabilities.put("web", new ArrayList<>());
         vulnerabilities.put("api", new ArrayList<>());
         vulnerabilities.put("mobile", new ArrayList<>());
+        vulnerabilities.put("aws", new ArrayList<>());
         
         reportData.put("metadata", metadata);
         reportData.put("summary", summary);
@@ -60,6 +61,13 @@ public class VAPTReportGenerator {
         @SuppressWarnings("unchecked")
         Map<String, List<Map<String, Object>>> vulns = (Map<String, List<Map<String, Object>>>) reportData.get("vulnerabilities");
         vulns.put("mobile", vulnerabilities);
+        updateSummary(vulnerabilities);
+    }
+    
+    public void addAwsVulnerabilities(List<Map<String, Object>> vulnerabilities) {
+        @SuppressWarnings("unchecked")
+        Map<String, List<Map<String, Object>>> vulns = (Map<String, List<Map<String, Object>>>) reportData.get("vulnerabilities");
+        vulns.put("aws", vulnerabilities);
         updateSummary(vulnerabilities);
     }
     
@@ -127,6 +135,7 @@ public class VAPTReportGenerator {
             writeVulnerabilitiesSection(writer, "WEB APPLICATION VULNERABILITIES", vulns.get("web"));
             writeVulnerabilitiesSection(writer, "API VULNERABILITIES", vulns.get("api"));
             writeVulnerabilitiesSection(writer, "MOBILE APPLICATION VULNERABILITIES", vulns.get("mobile"));
+            writeVulnerabilitiesSection(writer, "AWS SECURITY VULNERABILITIES", vulns.get("aws"));
             
             writer.write("=".repeat(80) + "\n");
             writer.write("END OF REPORT\n");

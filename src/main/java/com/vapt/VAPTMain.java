@@ -3,19 +3,21 @@ package com.vapt;
 import com.vapt.scanner.WebVAPTScanner;
 import com.vapt.scanner.APIVAPTScanner;
 import com.vapt.scanner.MobileVAPTScanner;
+import com.vapt.scanner.AWSSecurityScanner;
 import com.vapt.report.VAPTReportGenerator;
 
 import java.util.*;
 
 /**
  * VAPT Project - Main Interface
- * Vulnerability Assessment and Penetration Testing for Web, Mobile, and API
+ * Vulnerability Assessment and Penetration Testing for Web, Mobile, API, and AWS
  */
 public class VAPTMain {
     
     private static List<Map<String, Object>> webVulnerabilities = new ArrayList<>();
     private static List<Map<String, Object>> apiVulnerabilities = new ArrayList<>();
     private static List<Map<String, Object>> mobileVulnerabilities = new ArrayList<>();
+    private static List<Map<String, Object>> awsVulnerabilities = new ArrayList<>();
     
     public static void main(String[] args) {
         printBanner();
@@ -24,7 +26,7 @@ public class VAPTMain {
         
         while (true) {
             printMainMenu();
-            System.out.print("\nSelect an option (1-6): ");
+            System.out.print("\nSelect an option (1-7): ");
             String choice = scanner.nextLine().trim();
             
             switch (choice) {
@@ -38,19 +40,22 @@ public class VAPTMain {
                     mobileVAPTMenu(scanner);
                     break;
                 case "4":
-                    generateReportMenu(scanner);
+                    awsVAPTMenu(scanner);
                     break;
                 case "5":
-                    viewCurrentResults();
+                    generateReportMenu(scanner);
                     break;
                 case "6":
+                    viewCurrentResults();
+                    break;
+                case "7":
                     System.out.println("\nThank you for using VAPT Project!");
                     System.out.println("Stay secure! 🔒\n");
                     scanner.close();
                     System.exit(0);
                     break;
                 default:
-                    System.out.println("\nInvalid choice. Please select 1-6.");
+                    System.out.println("\nInvalid choice. Please select 1-7.");
             }
         }
     }
@@ -59,7 +64,7 @@ public class VAPTMain {
         String banner = """
             ╔══════════════════════════════════════════════════════════════╗
             ║         VAPT PROJECT - Vulnerability Assessment              ║
-            ║         Web | Mobile | API Security Testing                  ║
+            ║         Web | Mobile | API | AWS Security Testing            ║
             ╚══════════════════════════════════════════════════════════════╝
             """;
         System.out.println(banner);
@@ -72,9 +77,10 @@ public class VAPTMain {
         System.out.println("1. Web Application VAPT");
         System.out.println("2. API VAPT");
         System.out.println("3. Mobile Application VAPT");
-        System.out.println("4. Generate Report");
-        System.out.println("5. View Current Results");
-        System.out.println("6. Exit");
+        System.out.println("4. AWS Security VAPT");
+        System.out.println("5. Generate Report");
+        System.out.println("6. View Current Results");
+        System.out.println("7. Exit");
         System.out.println("=".repeat(60));
     }
     
@@ -164,8 +170,36 @@ public class VAPTMain {
         }
     }
     
+    private static void awsVAPTMenu(Scanner scanner) {
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("AWS SECURITY VAPT");
+        System.out.println("=".repeat(60));
+        
+        System.out.print("Enter AWS region (or press Enter for us-east-1): ");
+        String region = scanner.nextLine().trim();
+        if (region.isEmpty()) {
+            region = "us-east-1";
+        }
+        
+        System.out.println("\n[!] Make sure AWS credentials are configured:");
+        System.out.println("    - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables");
+        System.out.println("    - Or ~/.aws/credentials file");
+        System.out.println("    - Or IAM role (if running on EC2)");
+        
+        try {
+            AWSSecurityScanner awsScanner = new AWSSecurityScanner(region);
+            List<Map<String, Object>> vulns = awsScanner.scan();
+            awsVulnerabilities = vulns;
+            System.out.println("\n[+] Found " + vulns.size() + " AWS security vulnerabilities");
+        } catch (Exception e) {
+            System.out.println("Error during scan: " + e.getMessage());
+            System.out.println("Make sure AWS credentials are properly configured.");
+        }
+    }
+    
     private static void generateReportMenu(Scanner scanner) {
-        if (webVulnerabilities.isEmpty() && apiVulnerabilities.isEmpty() && mobileVulnerabilities.isEmpty()) {
+        if (webVulnerabilities.isEmpty() && apiVulnerabilities.isEmpty() && 
+            mobileVulnerabilities.isEmpty() && awsVulnerabilities.isEmpty()) {
             System.out.println("\n[!] No vulnerabilities found yet. Please run scans first.");
             return;
         }
@@ -184,6 +218,9 @@ public class VAPTMain {
         }
         if (!mobileVulnerabilities.isEmpty()) {
             generator.addMobileVulnerabilities(mobileVulnerabilities);
+        }
+        if (!awsVulnerabilities.isEmpty()) {
+            generator.addAwsVulnerabilities(awsVulnerabilities);
         }
         
         System.out.println("\nSelect report format:");
@@ -226,6 +263,8 @@ public class VAPTMain {
         System.out.println("Web Vulnerabilities: " + webVulnerabilities.size());
         System.out.println("API Vulnerabilities: " + apiVulnerabilities.size());
         System.out.println("Mobile Vulnerabilities: " + mobileVulnerabilities.size());
-        System.out.println("Total: " + (webVulnerabilities.size() + apiVulnerabilities.size() + mobileVulnerabilities.size()));
+        System.out.println("AWS Vulnerabilities: " + awsVulnerabilities.size());
+        System.out.println("Total: " + (webVulnerabilities.size() + apiVulnerabilities.size() + 
+            mobileVulnerabilities.size() + awsVulnerabilities.size()));
     }
 }

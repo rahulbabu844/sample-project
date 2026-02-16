@@ -1,6 +1,6 @@
 # VAPT Project 🔒
 
-A comprehensive Vulnerability Assessment and Penetration Testing (VAPT) toolkit for Web Applications, Mobile Applications, and APIs.
+A comprehensive Vulnerability Assessment and Penetration Testing (VAPT) toolkit for Web Applications, Mobile Applications, APIs, and AWS Cloud Infrastructure.
 
 ## Primary Features - VAPT Toolkit
 
@@ -25,6 +25,14 @@ A comprehensive Vulnerability Assessment and Penetration Testing (VAPT) toolkit 
 - **Hardcoded Secrets**: Scans for passwords, API keys, tokens in source files
 - **SSL Pinning**: Verifies SSL certificate pinning implementation
 - **Insecure Storage**: Detects unencrypted data storage usage
+
+### ☁️ AWS Security VAPT Scanner
+- **S3 Bucket Security**: Checks for public access, encryption, and versioning
+- **IAM Policy Analysis**: Identifies overly permissive policies and missing MFA
+- **EC2 Security Groups**: Detects open ports and public access misconfigurations
+- **RDS Security**: Checks encryption and public accessibility
+- **CloudTrail Logging**: Verifies API activity logging configuration
+- **Lambda Security**: Analyzes VPC configuration and network isolation
 
 ### 📊 Report Generator
 - Generate comprehensive security reports in JSON, Text, and HTML formats
@@ -67,7 +75,36 @@ Or if you've built the JAR:
 java -jar target/vapt-project-1.0.0.jar
 ```
 
-This provides an interactive menu for Web, API, and Mobile VAPT scanning.
+This provides an interactive menu for Web, API, Mobile, and AWS VAPT scanning.
+
+### AWS Credentials Configuration
+
+For AWS security scanning, configure AWS credentials using one of these methods:
+
+1. **Environment Variables:**
+```bash
+export AWS_ACCESS_KEY_ID=your_access_key
+export AWS_SECRET_ACCESS_KEY=your_secret_key
+export AWS_DEFAULT_REGION=us-east-1
+```
+
+2. **AWS Credentials File** (~/.aws/credentials):
+```ini
+[default]
+aws_access_key_id = your_access_key
+aws_secret_access_key = your_secret_key
+```
+
+3. **IAM Role** (if running on EC2 instance)
+
+**Required AWS Permissions:**
+- `s3:ListBuckets`, `s3:GetBucketPublicAccessBlock`, `s3:GetBucketEncryption`, `s3:GetBucketVersioning`
+- `iam:ListPolicies`, `iam:GetPolicyVersion`, `iam:ListUsers`, `iam:ListVirtualMfaDevices`
+- `ec2:DescribeSecurityGroups`
+- `rds:DescribeDBInstances`
+- `cloudtrail:ListTrails`, `cloudtrail:GetTrailStatus`
+- `lambda:ListFunctions`
+- `sts:GetCallerIdentity`
 
 ## Tool Examples
 
@@ -76,6 +113,7 @@ This provides an interactive menu for Web, API, and Mobile VAPT scanning.
 import com.vapt.scanner.WebVAPTScanner;
 import com.vapt.scanner.APIVAPTScanner;
 import com.vapt.scanner.MobileVAPTScanner;
+import com.vapt.scanner.AWSSecurityScanner;
 import com.vapt.report.VAPTReportGenerator;
 import java.util.*;
 
@@ -92,11 +130,16 @@ List<Map<String, Object>> apiVulns = apiScanner.scan(endpoints);
 MobileVAPTScanner mobileScanner = new MobileVAPTScanner();
 List<Map<String, Object>> mobileVulns = mobileScanner.scanApk("app.apk");
 
+// AWS Security VAPT
+AWSSecurityScanner awsScanner = new AWSSecurityScanner("us-east-1");
+List<Map<String, Object>> awsVulns = awsScanner.scan();
+
 // Generate Report
 VAPTReportGenerator reportGen = new VAPTReportGenerator();
 reportGen.addWebVulnerabilities(webVulns);
 reportGen.addApiVulnerabilities(apiVulns);
 reportGen.addMobileVulnerabilities(mobileVulns);
+reportGen.addAwsVulnerabilities(awsVulns);
 reportGen.generateHtmlReport("vapt_report.html");
 ```
 
@@ -112,6 +155,13 @@ reportGen.generateHtmlReport("vapt_report.html");
 - Use rate limiting to avoid overwhelming target systems
 - Respect the scope of authorized testing
 
+**AWS Security Testing**:
+- **ONLY scan AWS accounts you own or have explicit written permission to scan**
+- Ensure AWS credentials have appropriate read-only permissions
+- Be aware of AWS API rate limits and costs
+- Review AWS CloudTrail logs to understand scan impact
+- Follow AWS security best practices and compliance requirements
+
 ## Project Structure
 
 ```
@@ -122,7 +172,8 @@ VAPT-Project/
 │   ├── scanner/
 │   │   ├── WebVAPTScanner.java               # Web application VAPT scanner
 │   │   ├── APIVAPTScanner.java                # API VAPT scanner
-│   │   └── MobileVAPTScanner.java            # Mobile application VAPT scanner
+│   │   ├── MobileVAPTScanner.java            # Mobile application VAPT scanner
+│   │   └── AWSSecurityScanner.java           # AWS security VAPT scanner
 │   └── report/
 │       └── VAPTReportGenerator.java           # VAPT report generator
 └── README.md                                  # This file
